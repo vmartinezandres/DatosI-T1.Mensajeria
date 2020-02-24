@@ -1,33 +1,52 @@
 package server;
 
 import java.io.BufferedReader;
+//  ___________
+//_/BIBLIOTECAS
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class SocketServer {
-	public static void main (String[] args) {
-		boolean active = true;
-		try {
-			ServerSocket servidor = new ServerSocket(40000);
-			while (active) {
-				System.out.println("Listening...");
-				
-				Socket conexion = servidor.accept();
-				 
-				BufferedReader lector = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
-				
-				String mensaje = lector.readLine();
-				System.out.println("Mensaje recibido: " + mensaje);
-				
-				conexion.close();
 
+	public void establecerPuerto() {
+		String mensajeEntrada;
+//		 _________	
+//______/VARIABLES	
+		int puerto = 40000;
+		boolean activo = true;
+		ServerSocket servidor;
+		Socket conexion;
+		BufferedReader entrada;
+
+		
+		try {
+//			 _____________________________
+//__________/SE CREA LA CONEXION AL PUERTO
+			servidor = new ServerSocket(puerto);
+			System.out.println("Puerto disponible!");
+			
+			while (activo) {
+//				 ______________________________________________________________________
+//______________/SE ESPERA A QUE OTRO PROGRAMA ACCEDA AL PUERTO PARA CREAR UNA CONEXION
+				System.out.println("...");
+				conexion = servidor.accept();
+				
+//				 ______________________________
+//______________/SE RECIBE E IMPRIME UN MENSAJE
+				entrada = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
+				mensajeEntrada = entrada.readLine();
+				System.out.println(mensajeEntrada);
+				
+				//conexion.close();
+				//servidor.close();
+				
 			}
 		}
+		
 		catch(IOException e) {
-			e.printStackTrace();
+			System.out.print("Error de al establecer conexion al puerto");
 		}
 	}
 }
