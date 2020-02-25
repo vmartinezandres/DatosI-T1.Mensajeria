@@ -1,6 +1,6 @@
 package cliente;
 
-import java.awt.Font;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -17,60 +17,37 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class UsuarioUno extends JFrame implements ActionListener {
-		
+	
+//	 ____________________________________________________
+//__/VARIABLES PARA LA CONSTRUCION DE LA INTERFAZ GRAFICA
 	private static JTextArea areaTexto;
 	private static JScrollPane barra;
 	private static JButton botonEnviar;
 	private static JTextField campoTexto;
-	static String mensaje;
-	static String conversacion;
 	
+//	 ________________________________________________
+//__/VARIABLES PARA LA VISUALIZACION DE LA MENSAJERIA
+	static String miMensaje;
+	static String comprobacionMensaje;
+	static String conversacion;
+	static String mensajeEntrada;
+	
+//	 _______________________________
+//__/VARIABLES INTERNAS DEL PROGRAMA
+	static int puertoEntrada = 40000;
+	static int puertoSalida = 40001;
+	static String ip = "127.0.0.1";
 	static boolean activo = true;
-	static BufferedReader entrada;
 	static ServerSocket servidor;
 	static Socket conexion;
-	static String mensajeEntrada;
-	static int puerto = 40000;
-	
-	public static void Refrescar() {
-		try {
-//			 _____________________________
-//__________/SE CREA LA CONEXION AL PUERTO
-			servidor = new ServerSocket(puerto);
-			System.out.println("Puerto disponible!");
-			
-			while (activo) {
-//				 ______________________________________________________________________
-//______________/SE ESPERA A QUE OTRO PROGRAMA ACCEDA AL PUERTO PARA CREAR UNA CONEXION
-				System.out.println("Waiting...");
-				conexion = servidor.accept();
-				
-//				 ______________________________
-//______________/SE RECIBE E IMPRIME UN MENSAJE
-				entrada = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
-				mensajeEntrada = entrada.readLine();
-				
-				if (mensajeEntrada.contentEquals(mensaje)) {
-					System.out.println("No imprimo nada");
-				}
-				else {
-					conversacion = areaTexto.getText();
-					areaTexto.setText(conversacion + "\nUSUARIO 1:" + mensajeEntrada);
-				}		
-			}
-		}
-		
-		catch(IOException e) {
-			System.out.print("ERROR ??");
-		}
-	}
-
+	static BufferedReader entrada;
+	static OutputStreamWriter salida;
 	
 //	 ____________________________________
 //__/CONSTRUCTOR PARA LA INTERFAZ GRAFICA		
 	public UsuarioUno() {
 		setLayout(null);
-		setTitle("Messenger 1.0");
+		setTitle("Messenger de Martinez");
 		
 		botonEnviar = new JButton("ENVIAR");
 		botonEnviar.setBounds(500,720,80,50);
@@ -86,7 +63,6 @@ public class UsuarioUno extends JFrame implements ActionListener {
 		
 		campoTexto = new JTextField();
 		campoTexto.setBounds(100,726,400,35);
-		campoTexto.setFont(new Font("Andale Mono", 0, 16));
 		add(campoTexto);
 		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -96,33 +72,69 @@ public class UsuarioUno extends JFrame implements ActionListener {
 //__/ACTIONES AL PRESIONAR UN BOTON
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == botonEnviar) {
-			try {
-//				 ________________________________________
-//______________/SE ESTABLECE CONEXION CON LA IP Y PUERTO		
-				Socket conexion = new Socket("127.0.0.1", 40000);
-						
-//				 _______________________________
-//______________/SE MANDA UN MENSAJE AL SERVIDOR	
-				mensaje = campoTexto.getText().trim();
-				campoTexto.setText("");
-				
-				if (mensaje.equals("")) {
-					JOptionPane.showMessageDialog(null, "MENSAJE VACIO!" );
-				}
-				else {
-					OutputStreamWriter salida = new OutputStreamWriter(conexion.getOutputStream());
-					salida.write(mensaje);
-					salida.flush();
-					
-					conversacion = areaTexto.getText();
-					areaTexto.setText(conversacion + "\nUSUARIO 1:" + mensaje);
-					
-					conexion.close();
-				}
-				
-			} catch (IOException exception) {
-				JOptionPane.showMessageDialog(null, "ERROR: NO SE PUDO ESTABLECER CONEXION CON EL SERVIDOR");;
+			miMensaje = campoTexto.getText().trim();
+			
+			if (miMensaje.equals("")) {
+				campoTexto.setBackground(Color.PINK);
 			}
+			else {
+				campoTexto.setBackground(Color.WHITE);
+				try {
+//					 ________________________________________
+//__________________/SE ESTABLECE CONEXION CON LA IP Y PUERTO		
+					Socket conexion = new Socket(ip, puertoSalida);
+							
+//					 _______________________________
+//__________________/SE MANDA UN MENSAJE AL SERVIDOR						
+					campoTexto.setBackground(Color.WHITE);
+					salida = new OutputStreamWriter(conexion.getOutputStream());
+					salida.write(miMensaje);
+					salida.flush();
+						
+					conversacion = areaTexto.getText();
+					areaTexto.setText(conversacion + "\nUSUARIO 1:" + miMensaje);
+						
+					campoTexto.setText("");
+					conexion.close();	
+				} 
+				catch (IOException exception) {
+					JOptionPane.showMessageDialog(null, "ERROR: NO SE PUDO ESTABLECER CONEXION CON EL SERVIDOR");;
+				}
+			}
+		}
+	}
+	public static void mensajeEntrante() {
+		try {
+//			 _____________________________
+//__________/SE CREA LA CONEXION AL PUERTO
+			servidor = new ServerSocket(puertoEntrada);
+			
+			while (activo) {
+//				 ______________________________________________________________________
+//______________/SE ESPERA A QUE OTRO PROGRAMA ACCEDA AL PUERTO PARA CREAR UNA CONEXION
+				//System.out.println("Waiting...");
+				conexion = servidor.accept();
+				
+//				 ______________________________
+//______________/SE RECIBE E IMPRIME UN MENSAJE
+				entrada = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
+				mensajeEntrada = entrada.readLine();
+				
+//				System.out.print(mensajeEntrada);
+//				System.out.print(miMensaje);
+
+				if (mensajeEntrada.equals(miMensaje)) {
+					
+					
+				}	else {
+					conversacion = areaTexto.getText();
+					areaTexto.setText(conversacion + "\nUSUARIO 2:" + mensajeEntrada);
+				}
+			}
+		}
+		
+		catch(IOException e) {
+			System.out.print("ERROR ??");
 		}
 	}
 	
@@ -132,6 +144,6 @@ public class UsuarioUno extends JFrame implements ActionListener {
 		ventanaUsuario.setVisible(true);
 		ventanaUsuario.setLocationRelativeTo(null);
 		ventanaUsuario.setResizable(false);
-		Refrescar();
+		mensajeEntrante();
 	}
 }
