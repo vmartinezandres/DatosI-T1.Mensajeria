@@ -28,7 +28,6 @@ public class UsuarioUno extends JFrame implements ActionListener {
 //	 ________________________________________________
 //__/VARIABLES PARA LA VISUALIZACION DE LA MENSAJERIA
 	static String miMensaje;
-	static String comprobacionMensaje;
 	static String conversacion;
 	static String mensajeEntrada;
 	
@@ -47,7 +46,7 @@ public class UsuarioUno extends JFrame implements ActionListener {
 //__/CONSTRUCTOR PARA LA INTERFAZ GRAFICA		
 	public UsuarioUno() {
 		setLayout(null);
-		setTitle("Messenger de Martinez");
+		setTitle("Messenger 1.0");
 		
 		botonEnviar = new JButton("ENVIAR");
 		botonEnviar.setBounds(500,720,80,50);
@@ -68,8 +67,8 @@ public class UsuarioUno extends JFrame implements ActionListener {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
-//	 ______________________________
-//__/ACTIONES AL PRESIONAR UN BOTON
+//	 _____________________________________
+//__/ACTIONES AL PRESIONAR EL BOTON ENVIAR
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == botonEnviar) {
 			miMensaje = campoTexto.getText().trim();
@@ -79,6 +78,7 @@ public class UsuarioUno extends JFrame implements ActionListener {
 			}
 			else {
 				campoTexto.setBackground(Color.WHITE);
+				campoTexto.setText("");
 				try {
 //					 ________________________________________
 //__________________/SE ESTABLECE CONEXION CON LA IP Y PUERTO		
@@ -86,15 +86,13 @@ public class UsuarioUno extends JFrame implements ActionListener {
 							
 //					 _______________________________
 //__________________/SE MANDA UN MENSAJE AL SERVIDOR						
-					campoTexto.setBackground(Color.WHITE);
 					salida = new OutputStreamWriter(conexion.getOutputStream());
 					salida.write(miMensaje);
 					salida.flush();
 						
 					conversacion = areaTexto.getText();
 					areaTexto.setText(conversacion + "\nUSUARIO 1:" + miMensaje);
-						
-					campoTexto.setText("");
+					
 					conexion.close();	
 				} 
 				catch (IOException exception) {
@@ -112,7 +110,6 @@ public class UsuarioUno extends JFrame implements ActionListener {
 			while (activo) {
 //				 ______________________________________________________________________
 //______________/SE ESPERA A QUE OTRO PROGRAMA ACCEDA AL PUERTO PARA CREAR UNA CONEXION
-				//System.out.println("Waiting...");
 				conexion = servidor.accept();
 				
 //				 ______________________________
@@ -120,30 +117,22 @@ public class UsuarioUno extends JFrame implements ActionListener {
 				entrada = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
 				mensajeEntrada = entrada.readLine();
 				
-//				System.out.print(mensajeEntrada);
-//				System.out.print(miMensaje);
-
-				if (mensajeEntrada.equals(miMensaje)) {
-					
-					
-				}	else {
-					conversacion = areaTexto.getText();
-					areaTexto.setText(conversacion + "\nUSUARIO 2:" + mensajeEntrada);
-				}
+				conversacion = areaTexto.getText();
+				areaTexto.setText(conversacion + "\nUSUARIO 2:" + mensajeEntrada);
 			}
 		}
 		
 		catch(IOException e) {
-			System.out.print("ERROR ??");
+			JOptionPane.showMessageDialog(null, "ERROR: EL PROGRAMA FUE INICIADO ANTERIORMENTE");
 		}
 	}
 	
 	public static void main(String args[]) {
-		UsuarioUno ventanaUsuario = new UsuarioUno();
-		ventanaUsuario.setBounds(0,0,600,800);
-		ventanaUsuario.setVisible(true);
-		ventanaUsuario.setLocationRelativeTo(null);
-		ventanaUsuario.setResizable(false);
+		UsuarioUno ventanaUsuarioUno = new UsuarioUno();
+		ventanaUsuarioUno.setBounds(0,0,600,800);
+		ventanaUsuarioUno.setVisible(true);
+		ventanaUsuarioUno.setLocationRelativeTo(null);
+		ventanaUsuarioUno.setResizable(false);
 		mensajeEntrante();
 	}
 }

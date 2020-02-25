@@ -46,7 +46,7 @@ public class UsuarioDos extends JFrame implements ActionListener {
 //__/CONSTRUCTOR PARA LA INTERFAZ GRAFICA		
 	public UsuarioDos() {
 		setLayout(null);
-		setTitle("Messenger de Jaz");
+		setTitle("Messenger 2.0");
 		
 		botonEnviar = new JButton("ENVIAR");
 		botonEnviar.setBounds(500,720,80,50);
@@ -67,8 +67,8 @@ public class UsuarioDos extends JFrame implements ActionListener {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
-//	 ______________________________
-//__/ACTIONES AL PRESIONAR UN BOTON
+//	 _____________________________________
+//__/ACTIONES AL PRESIONAR EL BOTON ENVIAR
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == botonEnviar) {
 			miMensaje = campoTexto.getText().trim();
@@ -78,6 +78,7 @@ public class UsuarioDos extends JFrame implements ActionListener {
 			}
 			else {
 				campoTexto.setBackground(Color.WHITE);
+				campoTexto.setText("");
 				try {
 //					 ________________________________________
 //__________________/SE ESTABLECE CONEXION CON LA IP Y PUERTO		
@@ -85,15 +86,13 @@ public class UsuarioDos extends JFrame implements ActionListener {
 							
 //					 _______________________________
 //__________________/SE MANDA UN MENSAJE AL SERVIDOR						
-					campoTexto.setBackground(Color.WHITE);
 					salida = new OutputStreamWriter(conexion.getOutputStream());
 					salida.write(miMensaje);
 					salida.flush();
 						
 					conversacion = areaTexto.getText();
 					areaTexto.setText(conversacion + "\nUSUARIO 2:" + miMensaje);
-						
-					campoTexto.setText("");
+					
 					conexion.close();	
 				} 
 				catch (IOException exception) {
@@ -111,7 +110,6 @@ public class UsuarioDos extends JFrame implements ActionListener {
 			while (activo) {
 //				 ______________________________________________________________________
 //______________/SE ESPERA A QUE OTRO PROGRAMA ACCEDA AL PUERTO PARA CREAR UNA CONEXION
-				//System.out.println("Waiting...");
 				conexion = servidor.accept();
 				
 //				 ______________________________
@@ -119,30 +117,22 @@ public class UsuarioDos extends JFrame implements ActionListener {
 				entrada = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
 				mensajeEntrada = entrada.readLine();
 				
-//				System.out.print(mensajeEntrada);
-//				System.out.print(miMensaje);
-
-				if (mensajeEntrada.equals(miMensaje)) {
-					
-					
-				}	else {
-					conversacion = areaTexto.getText();
-					areaTexto.setText(conversacion + "\nUSUARIO 1:" + mensajeEntrada);
-				}
+				conversacion = areaTexto.getText();
+				areaTexto.setText(conversacion + "\nUSUARIO 1:" + mensajeEntrada);
 			}
 		}
 		
 		catch(IOException e) {
-			System.out.print("ERROR ??");
+			JOptionPane.showMessageDialog(null, "ERROR: EL PROGRAMA FUE INICIADO ANTERIORMENTE");
 		}
 	}
 	
 	public static void main(String args[]) {
-		UsuarioDos ventanaUsuario2 = new UsuarioDos();
-		ventanaUsuario2.setBounds(0,0,600,800);
-		ventanaUsuario2.setVisible(true);
-		ventanaUsuario2.setLocationRelativeTo(null);
-		ventanaUsuario2.setResizable(false);
+		UsuarioDos ventanaUsuarioDos = new UsuarioDos();
+		ventanaUsuarioDos.setBounds(0,0,600,800);
+		ventanaUsuarioDos.setVisible(true);
+		ventanaUsuarioDos.setLocationRelativeTo(null);
+		ventanaUsuarioDos.setResizable(false);
 		mensajeEntrante();
 	}
 }
