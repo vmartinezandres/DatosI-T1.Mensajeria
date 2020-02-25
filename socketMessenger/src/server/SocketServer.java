@@ -9,18 +9,17 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class SocketServer {
+//	 _________	
+//__/VARIABLES	
+	int puerto = 40000;
+	boolean activo = true;
+	public String mensajeEntrada;
+	
+	BufferedReader entrada;
+	ServerSocket servidor;
+	Socket conexion;
 
 	public void establecerPuerto() {
-		String mensajeEntrada;
-//		 _________	
-//______/VARIABLES	
-		int puerto = 40000;
-		boolean activo = true;
-		ServerSocket servidor;
-		Socket conexion;
-		BufferedReader entrada;
-
-		
 		try {
 //			 _____________________________
 //__________/SE CREA LA CONEXION AL PUERTO
@@ -30,23 +29,25 @@ public class SocketServer {
 			while (activo) {
 //				 ______________________________________________________________________
 //______________/SE ESPERA A QUE OTRO PROGRAMA ACCEDA AL PUERTO PARA CREAR UNA CONEXION
-				System.out.println("...");
+				System.out.println("Waiting...");
 				conexion = servidor.accept();
 				
 //				 ______________________________
 //______________/SE RECIBE E IMPRIME UN MENSAJE
 				entrada = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
 				mensajeEntrada = entrada.readLine();
-				System.out.println(mensajeEntrada);
+				enviarMensaje(mensajeEntrada);
 				
-				//conexion.close();
-				//servidor.close();
+				//System.out.println(mensajeEntrada);
 				
 			}
 		}
 		
 		catch(IOException e) {
-			System.out.print("Error de al establecer conexion al puerto");
+			System.out.print("ERROR AL ESTABLECER CONEXION AL PUERTO");
 		}
+	}
+	public String enviarMensaje(String msj) {	
+		return msj;
 	}
 }
