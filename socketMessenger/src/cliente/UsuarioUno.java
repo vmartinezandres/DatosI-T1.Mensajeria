@@ -17,6 +17,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class UsuarioUno extends JFrame implements ActionListener {
+	InfoInicial claseInfo = new InfoInicial();
+
 	
 //	 ____________________________________________________
 //__/VARIABLES PARA LA CONSTRUCION DE LA INTERFAZ GRAFICA
@@ -35,6 +37,7 @@ public class UsuarioUno extends JFrame implements ActionListener {
 //__/VARIABLES INTERNAS DEL PROGRAMA
 	static int puertoEntrada = 40000;
 	static int puertoSalida = 40001;
+    String nombrePersona = claseInfo.nombreUsuario;
 	static String ip = "127.0.0.1";
 	static boolean activo = true;
 	static ServerSocket servidor;
@@ -91,7 +94,7 @@ public class UsuarioUno extends JFrame implements ActionListener {
 					salida.flush();
 						
 					conversacion = areaTexto.getText();
-					areaTexto.setText(conversacion + "\nUSUARIO 1:" + miMensaje);
+					areaTexto.setText(conversacion + "\n" + nombrePersona + ": " + miMensaje);
 					
 					conexion.close();	
 				} 
