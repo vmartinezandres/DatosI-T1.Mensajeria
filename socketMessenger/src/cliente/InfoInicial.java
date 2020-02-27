@@ -10,18 +10,20 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import servidor.FuncionEntrada;
+
 public class InfoInicial extends JFrame implements ActionListener {
 	
 //	 ____________________________________________________
 //__/VARIABLES PARA LA CONSTRUCION DE LA INTERFAZ GRAFICA
-	private JLabel etiquetaNombre, etiquetaPuertoEntrada, etiqeutaPuertoSalida;
-	private JTextField campoNombre, campoPuertoEntrada, campoPuertoSalida;
-	private JButton botonAceptar;
+	public static JLabel etiquetaNombre, etiquetaPuertoEntrada, etiqeutaPuertoSalida;
+	public static JTextField campoNombre, campoPuertoEntrada, campoPuertoSalida;
+	public static JButton botonAceptar;
 	
 //	 ________________________________
 //__/VARIABLES PARA GUARDAR LOS DATOS
-	public String nombreUsuario = "Andres";
-	public int puertoEntrada, puertoSalida;
+	public static String nombreUsuario = "Andres";
+	public static int puertoEntrada, puertoSalida;
 
 	public InfoInicial() {
 		setLayout(null);
@@ -78,21 +80,28 @@ public class InfoInicial extends JFrame implements ActionListener {
 				try {
 					puertoEntrada = Integer.parseInt(campoPuertoEntrada.getText());
 					puertoSalida = Integer.parseInt(campoPuertoSalida.getText());
-					campoPuertoEntrada.setBackground(Color.WHITE);
-					campoPuertoSalida.setBackground(Color.WHITE);
 					
-					System.out.print(nombreUsuario);
-					System.out.print(puertoEntrada);
-					System.out.print(puertoSalida);
+					if (puertoEntrada == puertoSalida) {
+						campoPuertoEntrada.setBackground(Color.PINK);
+						campoPuertoSalida.setBackground(Color.PINK);
+						JOptionPane.showMessageDialog(null, "ERROR: ¿PARA QUE QUIERES HABLAR CONTIGO MISMO?");
+					}
+					else {
+						campoPuertoEntrada.setBackground(Color.WHITE);
+						campoPuertoSalida.setBackground(Color.WHITE);
+						
+						Thread hilo = new FuncionEntrada("Entrada de datos");
+						hilo.start();
 
-//					UsuarioUno ventanaUsuarioUno = new UsuarioUno();
-//					ventanaUsuarioUno.setBounds(0,0,600,800);
-//					ventanaUsuarioUno.setVisible(true);
-//					ventanaUsuarioUno.setLocationRelativeTo(null);
-//					ventanaUsuarioUno.setResizable(false);
-//					this.setVisible(false);
-//					UsuarioUno.mensajeEntrante();
+						Chat ventanaChat = new Chat();
+						ventanaChat.setBounds(0,0,600,800);
+						ventanaChat.setVisible(true);
+						ventanaChat.setLocationRelativeTo(null);
+						ventanaChat.setResizable(false);
+						this.setVisible(false);
+					}
 				}
+				
 				catch(Exception exc) {
 					campoPuertoEntrada.setBackground(Color.PINK);
 					campoPuertoSalida.setBackground(Color.PINK);

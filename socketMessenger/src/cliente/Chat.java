@@ -3,11 +3,8 @@ package cliente;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,37 +13,32 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class UsuarioDos extends JFrame implements ActionListener {
+public class Chat extends JFrame implements ActionListener {
 	
 //	 ____________________________________________________
 //__/VARIABLES PARA LA CONSTRUCION DE LA INTERFAZ GRAFICA
-	private static JTextArea areaTexto;
-	private static JScrollPane barra;
-	private static JButton botonEnviar;
-	private static JTextField campoTexto;
+	public static JTextArea areaTexto;
+	public static JScrollPane barra;
+	public static JButton botonEnviar;
+	public static JTextField campoTexto;
 	
 //	 ________________________________________________
 //__/VARIABLES PARA LA VISUALIZACION DE LA MENSAJERIA
-	static String miMensaje;
-	static String conversacion;
-	static String mensajeEntrada;
+	public static String miMensaje;
+	public static String conversacionGuardada;
 	
 //	 _______________________________
 //__/VARIABLES INTERNAS DEL PROGRAMA
-	static int puertoEntrada = 40001;
-	static int puertoSalida = 40000;
-	static String ip = "127.0.0.1";
-	static boolean activo = true;
-	static ServerSocket servidor;
-	static Socket conexion;
-	static BufferedReader entrada;
-	static OutputStreamWriter salida;
+	public static String nombreUsuario = InfoInicial.nombreUsuario;
+	public static int puertoSalida = InfoInicial.puertoSalida;
+	public static String ip = "127.0.0.1";
+	public static OutputStreamWriter salida;
 	
 //	 ____________________________________
 //__/CONSTRUCTOR PARA LA INTERFAZ GRAFICA		
-	public UsuarioDos() {
+	public Chat() {
 		setLayout(null);
-		setTitle("Messenger 2.0");
+		setTitle("Chat de " + nombreUsuario);
 		
 		botonEnviar = new JButton("ENVIAR");
 		botonEnviar.setBounds(500,720,80,50);
@@ -55,7 +47,7 @@ public class UsuarioDos extends JFrame implements ActionListener {
 		add(botonEnviar);
 		
 		areaTexto = new JTextArea();
-		areaTexto.setEditable(true);
+		areaTexto.setEditable(false);
 		barra = new JScrollPane(areaTexto);
 		barra.setBounds(140,40,435,650);
 		add(barra);
@@ -90,49 +82,23 @@ public class UsuarioDos extends JFrame implements ActionListener {
 					salida.write(miMensaje);
 					salida.flush();
 						
-					conversacion = areaTexto.getText();
-					areaTexto.setText(conversacion + "\nUSUARIO 2:" + miMensaje);
+					conversacionGuardada = areaTexto.getText();
+					areaTexto.setText(conversacionGuardada + "\nYo: " + miMensaje);
 					
 					conexion.close();	
 				} 
 				catch (IOException exception) {
-					JOptionPane.showMessageDialog(null, "ERROR: NO SE PUDO ESTABLECER CONEXION CON EL SERVIDOR");;
+					JOptionPane.showMessageDialog(null, "ERROR: NO SE PUDO CONECTAR A NINGUN CHAT");
 				}
 			}
 		}
 	}
-	public static void mensajeEntrante() {
-		try {
-//			 _____________________________
-//__________/SE CREA LA CONEXION AL PUERTO
-			servidor = new ServerSocket(puertoEntrada);
-			
-			while (activo) {
-//				 ______________________________________________________________________
-//______________/SE ESPERA A QUE OTRO PROGRAMA ACCEDA AL PUERTO PARA CREAR UNA CONEXION
-				conexion = servidor.accept();
-				
-//				 ______________________________
-//______________/SE RECIBE E IMPRIME UN MENSAJE
-				entrada = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
-				mensajeEntrada = entrada.readLine();
-				
-				conversacion = areaTexto.getText();
-				areaTexto.setText(conversacion + "\nUSUARIO 1:" + mensajeEntrada);
-			}
-		}
-		
-		catch(IOException e) {
-			JOptionPane.showMessageDialog(null, "ERROR: EL PROGRAMA FUE INICIADO ANTERIORMENTE");
-		}
-	}
 	
 	public static void main(String args[]) {
-		UsuarioDos ventanaUsuarioDos = new UsuarioDos();
-		ventanaUsuarioDos.setBounds(0,0,600,800);
-		ventanaUsuarioDos.setVisible(true);
-		ventanaUsuarioDos.setLocationRelativeTo(null);
-		ventanaUsuarioDos.setResizable(false);
-		mensajeEntrante();
+		Chat ventanaChat = new Chat();
+		ventanaChat.setBounds(0,0,600,800);
+		ventanaChat.setVisible(true);
+		ventanaChat.setLocationRelativeTo(null);
+		ventanaChat.setResizable(false);
 	}
 }
