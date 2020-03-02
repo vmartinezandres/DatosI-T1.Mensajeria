@@ -24,7 +24,7 @@ public class Chat extends JFrame implements ActionListener {
 //__/VARIABLES INTERNAS DEL PROGRAMA
 	public static String nombreUsuario = InfoInicial.nombreUsuario;
 	public static String puertoSalidaTexto, ip = "127.0.0.1";
-	public static int puertoSalida, contadorContacto = 0;
+	public static int puertoSalida, cantidadContactos, buscadorContacto;
 	public static OutputStreamWriter salida;
 	public static String matrizContactos[][] = new String[100][3];
 	
@@ -93,7 +93,7 @@ public class Chat extends JFrame implements ActionListener {
 		botonConfirmarContacto.setBounds(95,250,50,40);
 		botonConfirmarContacto.setFont(new Font(null, 1, 20));
 		botonConfirmarContacto.addActionListener(this);
-		botonConfirmarContacto.setEnabled(true);
+		botonConfirmarContacto.setEnabled(false);
 		add(botonConfirmarContacto);
 		
 		botonEnviar = new JButton("➤");
@@ -140,8 +140,32 @@ public class Chat extends JFrame implements ActionListener {
 		}
 		
 		else if (e.getSource() == botonConfirmarContacto) {
+			while (buscadorContacto < cantidadContactos) {
+				if (matrizContactos[buscadorContacto][1].equals(puertoSalidaTexto)) {
+					matrizContactos[buscadorContacto][2] = areaTexto.getText();
+					areaTexto.setText("");
+					break;
+				}
+				
+				buscadorContacto++;
+			}
+			
+			buscadorContacto = 0;
+			
 			puertoSalidaTexto = cajaContactos.getSelectedItem().toString();
 			puertoSalida = Integer.parseInt(puertoSalidaTexto);	
+			
+			while (buscadorContacto < cantidadContactos) {
+				if (matrizContactos[buscadorContacto][1].equals(puertoSalidaTexto)) {
+					
+					areaTexto.setText(matrizContactos[buscadorContacto][2]);
+					break;
+				}
+				
+				buscadorContacto++;
+			}
+			
+			buscadorContacto = 0;
 		}
 		
 		else if (e.getSource() == botonEnviar) {
