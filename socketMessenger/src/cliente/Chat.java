@@ -24,8 +24,9 @@ public class Chat extends JFrame implements ActionListener {
 //__/VARIABLES INTERNAS DEL PROGRAMA
 	public static String nombreUsuario = InfoInicial.nombreUsuario;
 	public static String puertoSalidaTexto, ip = "127.0.0.1";
-	public static int puertoSalida;
+	public static int puertoSalida, contadorContacto = 0;
 	public static OutputStreamWriter salida;
+//	public static String matrizContactos[][] = new String[100][3];
 	
 //	 ________________________________________________
 //__/VARIABLES PARA LA VISUALIZACION DE LA MENSAJERIA

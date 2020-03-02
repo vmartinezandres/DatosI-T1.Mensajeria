@@ -17,8 +17,9 @@ public class NuevoContacto extends JFrame implements ActionListener {
 	
 //	 ________________________________
 //__/VARIABLES PARA GUARDAR LOS DATOS
-	public static String nombreContacto;
-	public static int puertoSalida;
+	public static String nombreContacto, puertoSalidaAnterior = Chat.puertoSalidaTexto;
+	public static int puertoSalida, buscadorContacto = 0;
+//	public static String matrizContactos[][] = Chat.matrizContactos;
 	
 //	 ____________________________________________________
 //__/VARIABLES PARA LA CONSTRUCION DE LA INTERFAZ GRAFICA
@@ -87,6 +88,19 @@ public class NuevoContacto extends JFrame implements ActionListener {
 					campoPuertoSalida.setBackground(Color.WHITE);
 
 					Chat.cajaContactos.addItem(puertoSalida);
+					
+					Chat.matrizContactos[Chat.contadorContacto][0] = nombreContacto;
+					Chat.matrizContactos[Chat.contadorContacto][1] = String.valueOf(puertoSalida);
+					
+					
+					while (buscadorContacto < Chat.contadorContacto) {
+						if (Chat.matrizContactos[buscadorContacto][1].equals(puertoSalidaAnterior)) {
+							
+						}
+					}
+					Chat.matrizContactos[Chat.contadorContacto][2] = Chat.areaTexto.getText();
+
+					Chat.contadorContacto++;
 						
 					this.setVisible(false);
 					}
