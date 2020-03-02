@@ -17,11 +17,10 @@ public class FuncionEntrada extends Thread {
 //__/VARIABLES INTERNAS DEL PROGRAMA
 	public static ServerSocket servidor;
 	public static int puertoEntrada = InfoInicial.puertoEntrada;
-	public static int puertoSalida = InfoInicial.puertoSalida;
 	public static Socket conexion;
 	public static BufferedReader entrada;
 	public static String mensajeEntrada;
-	public static String conversacionGuardada;
+	public static String conversacionActiva;
 	
 	public FuncionEntrada(String msg) {
 		super(msg);
@@ -45,8 +44,8 @@ public class FuncionEntrada extends Thread {
 				
 //				 ____________________
 //______________/SE IMPRIME EL MENSAJE
-				conversacionGuardada = Chat.areaTexto.getText();
-				Chat.areaTexto.setText(conversacionGuardada + "\n" + puertoSalida + ": " + mensajeEntrada);
+				conversacionActiva = Chat.areaTexto.getText();
+				Chat.areaTexto.setText(conversacionActiva + "\n" + mensajeEntrada);
 			}
 		}
 		
