@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
@@ -18,7 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class Chat extends JFrame implements ActionListener {
+public class Chat extends JFrame implements ActionListener, ItemListener {
 	
 //	 _______________________________
 //__/VARIABLES INTERNAS DEL PROGRAMA
@@ -38,7 +40,7 @@ public class Chat extends JFrame implements ActionListener {
 	public static JTextArea areaTexto;
 	public static JScrollPane barra; 
 	public static JButton botonConfiguracion, botonNuevoContacto, 
-	botonEliminarContacto, botonConfirmarContacto, botonEnviar;
+	botonEliminarContacto, botonEnviar;
 	public static JTextField campoTexto;
 	public static JLabel etiquetaImagen, etiquetaContactos;
 	public static JComboBox<Integer> cajaContactos;
@@ -65,6 +67,7 @@ public class Chat extends JFrame implements ActionListener {
 		cajaContactos.setBounds(0,200,150,50);
 		cajaContactos.setFont(new Font("Noteworthy", 1, 14));
 		cajaContactos.setBackground(new Color(236, 252, 255));
+		cajaContactos.addItemListener(this);
 		add(cajaContactos);
 		
 		botonConfiguracion = new JButton("⚙");
@@ -75,26 +78,19 @@ public class Chat extends JFrame implements ActionListener {
 		botonConfiguracion.setEnabled(true);
 		add(botonConfiguracion);
 		
-		botonNuevoContacto = new JButton("✎");
-		botonNuevoContacto.setBounds(5,250,50,40);
+		botonNuevoContacto = new JButton("+");
+		botonNuevoContacto.setBounds(28,250,50,40);
 		botonNuevoContacto.setFont(new Font(null, 1, 20));
 		botonNuevoContacto.addActionListener(this);
 		botonNuevoContacto.setEnabled(true);
 		add(botonNuevoContacto);
 		
 		botonEliminarContacto = new JButton("✂");
-		botonEliminarContacto.setBounds(50,250,50,40);
+		botonEliminarContacto.setBounds(73,250,50,40);
 		botonEliminarContacto.setFont(new Font(null, 1, 20));
 		botonEliminarContacto.addActionListener(this);
-		botonEliminarContacto.setEnabled(true);
+		botonEliminarContacto.setEnabled(false);
 		add(botonEliminarContacto);
-		
-		botonConfirmarContacto = new JButton("✔");
-		botonConfirmarContacto.setBounds(95,250,50,40);
-		botonConfirmarContacto.setFont(new Font(null, 1, 20));
-		botonConfirmarContacto.addActionListener(this);
-		botonConfirmarContacto.setEnabled(false);
-		add(botonConfirmarContacto);
 		
 		botonEnviar = new JButton("➤");
 		botonEnviar.setBounds(514,723,80,50);
@@ -120,8 +116,8 @@ public class Chat extends JFrame implements ActionListener {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
-//	 _____________________________________
-//__/ACTIONES AL PRESIONAR EL BOTON ENVIAR
+//	 _________________________________
+//__/ACTIONES AL PRESIONAR ALGUN BOTON
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == botonConfiguracion) {
 	
@@ -136,29 +132,22 @@ public class Chat extends JFrame implements ActionListener {
 		}
 		
 		else if (e.getSource() == botonEliminarContacto) {
-			cajaContactos.removeItem(cajaContactos.getSelectedItem());
-		}
-		
-		else if (e.getSource() == botonConfirmarContacto) {
-			while (buscadorContacto < cantidadContactos) {
-				if (matrizContactos[buscadorContacto][1].equals(puertoSalidaTexto)) {
-					matrizContactos[buscadorContacto][2] = areaTexto.getText();
-					areaTexto.setText("");
-					break;
-				}
-				
-				buscadorContacto++;
-			}
-			
-			buscadorContacto = 0;
-			
-			puertoSalidaTexto = cajaContactos.getSelectedItem().toString();
-			puertoSalida = Integer.parseInt(puertoSalidaTexto);	
-			
+//			 __________________________________
+//__________/SE ENCUENTRA Y ELIMINA EL CONTACTO
 			while (buscadorContacto < cantidadContactos) {
 				if (matrizContactos[buscadorContacto][1].equals(puertoSalidaTexto)) {
 					
-					areaTexto.setText(matrizContactos[buscadorContacto][2]);
+					matrizContactos[buscadorContacto][0] = "";
+					matrizContactos[buscadorContacto][1] = "";
+					matrizContactos[buscadorContacto][2] = "";
+					
+					for (int buscadorItem = 0; buscadorItem < cajaContactos.getItemCount(); buscadorItem++) {
+						if (cajaContactos.getItemAt(buscadorItem).toString().equals(puertoSalidaTexto)) {
+							
+							cajaContactos.removeItemAt(buscadorItem);
+						}
+					}
+				
 					break;
 				}
 				
@@ -185,7 +174,7 @@ public class Chat extends JFrame implements ActionListener {
 //					 _______________________________
 //__________________/SE MANDA UN MENSAJE AL SERVIDOR						
 					salida = new OutputStreamWriter(conexion.getOutputStream());
-					salida.write(InfoInicial.nombreUsuario + ": " + miMensaje);
+					salida.write(miMensaje);
 					salida.flush();
 						
 					conversacionActiva = areaTexto.getText();
@@ -196,6 +185,53 @@ public class Chat extends JFrame implements ActionListener {
 				catch (IOException exception) {
 					JOptionPane.showMessageDialog(null, "IMPOSIBLE CONECTARSE A CHAT", "ERROR", JOptionPane.WARNING_MESSAGE);
 				}
+			}
+		}
+	}
+	
+//	 ___________________________
+//__/ACTIONES AL CAMBIAR DE ITEM
+	public void itemStateChanged(ItemEvent e) {
+		if (e.getSource() == cajaContactos) {
+			if (cajaContactos.getSelectedItem() != null && cajaContactos.getItemCount() != 0) {
+// 				 ____________________________________________
+//______________/SE ENCUENTRA EL CONTACTO Y SE GUARDA SU CHAT
+				while (buscadorContacto < cantidadContactos) {
+					if (matrizContactos[buscadorContacto][1].equals(puertoSalidaTexto)) {
+						matrizContactos[buscadorContacto][2] = areaTexto.getText();
+						areaTexto.setText("");
+						break;
+					}
+								
+					buscadorContacto++;
+				}
+							
+				buscadorContacto = 0;
+						
+				puertoSalidaTexto = cajaContactos.getSelectedItem().toString();
+				puertoSalida = Integer.parseInt(puertoSalidaTexto);	
+							
+//				 ______________________________________________
+//______________/SE ENCUENTRA EL CONTACTO Y SE PROYECTA SU CHAT
+				while (buscadorContacto < cantidadContactos) {
+					if (matrizContactos[buscadorContacto][1].equals(puertoSalidaTexto)) {
+									
+						areaTexto.setText(matrizContactos[buscadorContacto][2]);
+						break;
+					}
+								
+					buscadorContacto++;
+				}
+							
+				buscadorContacto = 0;
+				
+				botonEliminarContacto.setEnabled(true);
+			}
+			
+			else {
+				
+				areaTexto.setText("");
+				botonEliminarContacto.setEnabled(false);
 			}
 		}
 	}

@@ -16,7 +16,7 @@ public class EntradaDatos extends Thread {
 //	 _______________________________
 //__/VARIABLES INTERNAS DEL PROGRAMA
 	public static ServerSocket servidor;
-	public static int puertoEntrada = InfoInicial.puertoEntrada;
+	public static int buscadorContacto, puertoEntrada = InfoInicial.puertoEntrada;
 	public static Socket conexion;
 	public static BufferedReader entrada;
 	public static String mensajeEntrada;
@@ -42,17 +42,26 @@ public class EntradaDatos extends Thread {
 				entrada = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
 				mensajeEntrada = entrada.readLine();
 				
-//				 ____________________
-//______________/SE IMPRIME EL MENSAJE
-				conversacionActiva = Chat.areaTexto.getText();
-				Chat.areaTexto.setText(conversacionActiva + "\n" + mensajeEntrada);
+//			     _____________________________________________
+//______________/SE ENCUENTRA EL CONTACTO E IMPRIME EL MENSAJE
+				while (buscadorContacto < Chat.cantidadContactos) {
+					if (Chat.matrizContactos[buscadorContacto][1].equals(Chat.puertoSalidaTexto)) {
+						conversacionActiva = Chat.areaTexto.getText();
+						Chat.areaTexto.setText(conversacionActiva + "\n" + Chat.matrizContactos[buscadorContacto][0] + ": " + mensajeEntrada);
+						break;
+					}
+					
+					buscadorContacto++;
+				}
+				
+				buscadorContacto = 0;						
 			}
 		}
 		
 		catch(IOException e) {
 //			 __________________________________________________________
-//__________/ERROR AL EXISTIR DOS CHATS CON EL MISMOS PUERTO DE ENTRADA			
-			JOptionPane.showMessageDialog(null, "ERROR: YA EXISTE UN CHAT CON ESE PUERTO DE ENTRADA");
+//__________/ERROR AL EXISTIR DOS CHATS CON EL MISMOS PUERTO DE ENTRADA		
+			JOptionPane.showMessageDialog(null, "PUERTO YA EXISTENTE", "ERROR", JOptionPane.WARNING_MESSAGE);
 			System.exit(0);
 		}
 	}

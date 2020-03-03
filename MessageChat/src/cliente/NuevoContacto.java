@@ -19,7 +19,6 @@ public class NuevoContacto extends JFrame implements ActionListener {
 //__/VARIABLES PARA GUARDAR LOS DATOS
 	public static String nombreContacto, puertoSalidaAnterior = Chat.puertoSalidaTexto;
 	public static int puertoSalida;
-//	public static String matrizContactos[][] = Chat.matrizContactos;
 	
 //	 ____________________________________________________
 //__/VARIABLES PARA LA CONSTRUCION DE LA INTERFAZ GRAFICA
@@ -84,19 +83,26 @@ public class NuevoContacto extends JFrame implements ActionListener {
 				
 				try {
 					puertoSalida = Integer.parseInt(campoPuertoSalida.getText());
-					campoPuertoSalida.setText("");
-					campoPuertoSalida.setBackground(Color.WHITE);
-
-					Chat.cajaContactos.addItem(puertoSalida);
-			
-					Chat.matrizContactos[Chat.cantidadContactos][0] = nombreContacto;
-					Chat.matrizContactos[Chat.cantidadContactos][1] = String.valueOf(puertoSalida);
 					
-					Chat.cantidadContactos++;
+					if (puertoSalida != InfoInicial.puertoEntrada) {
+						campoPuertoSalida.setText("");
+						campoPuertoSalida.setBackground(Color.WHITE);
+
+						Chat.cajaContactos.addItem(puertoSalida);
+				
+						Chat.matrizContactos[Chat.cantidadContactos][0] = nombreContacto;
+						Chat.matrizContactos[Chat.cantidadContactos][1] = String.valueOf(puertoSalida);
 						
-					Chat.botonConfirmarContacto.setEnabled(true);
-					this.setVisible(false);
+						Chat.cantidadContactos++;
+							
+						this.setVisible(false);
 					}
+					
+					else {
+						campoPuertoSalida.setBackground(Color.PINK);
+						JOptionPane.showMessageDialog(null, "PUERTO PERSONAL", "ERROR", JOptionPane.WARNING_MESSAGE);
+					}
+				}
 				
 				catch (Exception e2) {
 					campoPuertoSalida.setBackground(Color.PINK);
