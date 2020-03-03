@@ -26,6 +26,8 @@ public class InfoInicial extends JFrame implements ActionListener {
 	public static JTextField campoNombre, campoPuertoEntrada;
 	public static JButton botonAceptar;
 
+//	 ____________________________________
+//__/CONSTRUCTOR PARA LA INTERFAZ GRAFICA
 	public InfoInicial() {
 		setLayout(null);
 		setTitle("Sign in");
@@ -70,6 +72,14 @@ public class InfoInicial extends JFrame implements ActionListener {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
+//	 ______________________________________
+//__/ACTIONES AL PRESIONAR EL BOTON ACEPTAR
+	
+	/*
+	 * AL presionar el JButton: botonAceptar, se comprobara que los datos digitados sean validos, 
+	 * en dicho caso, se ejecutara un Thread para recibir los mensajes entrantes y se pasara a la ventana de Chat
+	 * 
+	 * */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == botonAceptar) {
 			nombreUsuario = campoNombre.getText().trim();
@@ -103,6 +113,8 @@ public class InfoInicial extends JFrame implements ActionListener {
 		}
 	}
 	
+//	 ____
+//__/MAIN
 	public static void main (String[] args) {
 		InfoInicial ventanaInfo = new InfoInicial();
 		ventanaInfo.setBounds(0,0,245,300);

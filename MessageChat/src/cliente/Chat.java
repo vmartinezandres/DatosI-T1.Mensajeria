@@ -20,6 +20,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import servidor.EntradaDatos;
+
 public class Chat extends JFrame implements ActionListener, ItemListener {
 	
 //	 _______________________________
@@ -39,8 +41,7 @@ public class Chat extends JFrame implements ActionListener, ItemListener {
 //__/VARIABLES PARA LA CONSTRUCION DE LA INTERFAZ GRAFICA
 	public static JTextArea areaTexto;
 	public static JScrollPane barra; 
-	public static JButton botonConfiguracion, botonNuevoContacto, 
-	botonEliminarContacto, botonEnviar;
+	public static JButton botonNuevoContacto, botonEliminarContacto, botonEnviar;
 	public static JTextField campoTexto;
 	public static JLabel etiquetaImagen, etiquetaContactos;
 	public static JComboBox<Integer> cajaContactos;
@@ -69,14 +70,6 @@ public class Chat extends JFrame implements ActionListener, ItemListener {
 		cajaContactos.setBackground(new Color(236, 252, 255));
 		cajaContactos.addItemListener(this);
 		add(cajaContactos);
-		
-		botonConfiguracion = new JButton("⚙");
-		botonConfiguracion.setBounds(0,0,35,35);
-		botonConfiguracion.setFont(new Font(null, 1, 32));
-		botonConfiguracion.setForeground(Color.DARK_GRAY);
-		botonConfiguracion.addActionListener(this);
-		botonConfiguracion.setEnabled(true);
-		add(botonConfiguracion);
 		
 		botonNuevoContacto = new JButton("+");
 		botonNuevoContacto.setBounds(28,250,50,40);
@@ -118,12 +111,13 @@ public class Chat extends JFrame implements ActionListener, ItemListener {
 
 //	 _________________________________
 //__/ACTIONES AL PRESIONAR ALGUN BOTON
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == botonConfiguracion) {
 	
-		}
-		
-		else if (e.getSource() == botonNuevoContacto) {
+	/*
+	 * Al presionar el JButton: botonNuevoContacto, se pasara a la ventana NuevoContacto
+	 * 
+	 * */
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == botonNuevoContacto) {
 			NuevoContacto ventanaContacto = new NuevoContacto();
 			ventanaContacto.setBounds(0,0,245,300);
 			ventanaContacto.setVisible(true);
@@ -131,9 +125,12 @@ public class Chat extends JFrame implements ActionListener, ItemListener {
 			ventanaContacto.setResizable(false);
 		}
 		
+		/*
+		 * Al presionar el JButton: BotonEliminarCOntacto, se encuentra y elimina el contacto en la matrizContactos, 
+		 * despues se elimina el item correspondiente en el JComboBox: cajaContactos
+		 * 
+		 * */
 		else if (e.getSource() == botonEliminarContacto) {
-//			 __________________________________
-//__________/SE ENCUENTRA Y ELIMINA EL CONTACTO
 			while (buscadorContacto < cantidadContactos) {
 				if (matrizContactos[buscadorContacto][1].equals(puertoSalidaTexto)) {
 					
@@ -157,6 +154,13 @@ public class Chat extends JFrame implements ActionListener, ItemListener {
 			buscadorContacto = 0;
 		}
 		
+		/*
+		 * Al presionar el JButton: botonEnviar, se revisa que el mensaje no este vacio, 
+		 * despues crea la conexion con el socket con la ip y puerto correspondiente y,
+		 * por ultimo, se envia el mensaje (puerto + mensaje) para su posterior revision.
+		 * En caso de no existir esa conexion se mandara un mensaje de error.
+		 * 
+		 * */
 		else if (e.getSource() == botonEnviar) {
 			miMensaje = campoTexto.getText().trim();
 			
@@ -164,16 +168,16 @@ public class Chat extends JFrame implements ActionListener, ItemListener {
 				campoTexto.setBackground(Color.PINK);
 			}
 			else {
+				
 				campoTexto.setBackground(new Color(236, 252, 255));
 				campoTexto.setText("");
 				try {
-//					 ________________________________________
-//__________________/SE ESTABLECE CONEXION CON LA IP Y PUERTO		
+					
 					Socket conexion = new Socket(ip, puertoSalida);
 							
-//					 _______________________________
-//__________________/SE MANDA UN MENSAJE AL SERVIDOR						
 					salida = new OutputStreamWriter(conexion.getOutputStream());
+					salida.write(String.valueOf(InfoInicial.puertoEntrada));
+					salida.flush();
 					salida.write(miMensaje);
 					salida.flush();
 						
@@ -191,11 +195,18 @@ public class Chat extends JFrame implements ActionListener, ItemListener {
 	
 //	 ___________________________
 //__/ACTIONES AL CAMBIAR DE ITEM
+	
+	/*
+	 * Al cambiar entre algunos de los items del jComboBox: cajaContactos, 
+	 * se guardara la conversacion en el puerto anterior, despues se revisara 
+	 * si se tiene alguna conversacion guardada con el puerto actual, en caso de ser afirmativo, 
+	 * se imprimira la conversacion correspondiente. Ademas, en caso de no existir contactos, 
+	 * se eliminara el texto en pantalla y se deshabilitara el JButton: botonEliminarContacto
+	 * 
+	 * */
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource() == cajaContactos) {
 			if (cajaContactos.getSelectedItem() != null && cajaContactos.getItemCount() != 0) {
-// 				 ____________________________________________
-//______________/SE ENCUENTRA EL CONTACTO Y SE GUARDA SU CHAT
 				while (buscadorContacto < cantidadContactos) {
 					if (matrizContactos[buscadorContacto][1].equals(puertoSalidaTexto)) {
 						matrizContactos[buscadorContacto][2] = areaTexto.getText();
@@ -211,8 +222,6 @@ public class Chat extends JFrame implements ActionListener, ItemListener {
 				puertoSalidaTexto = cajaContactos.getSelectedItem().toString();
 				puertoSalida = Integer.parseInt(puertoSalidaTexto);	
 							
-//				 ______________________________________________
-//______________/SE ENCUENTRA EL CONTACTO Y SE PROYECTA SU CHAT
 				while (buscadorContacto < cantidadContactos) {
 					if (matrizContactos[buscadorContacto][1].equals(puertoSalidaTexto)) {
 									
@@ -234,13 +243,5 @@ public class Chat extends JFrame implements ActionListener, ItemListener {
 				botonEliminarContacto.setEnabled(false);
 			}
 		}
-	}
-	
-	public static void main(String args[]) {
-		Chat ventanaChat = new Chat();
-		ventanaChat.setBounds(0,0,600,800);
-		ventanaChat.setVisible(true);
-		ventanaChat.setLocationRelativeTo(null);
-		ventanaChat.setResizable(false);
 	}
 }

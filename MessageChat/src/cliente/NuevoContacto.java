@@ -18,7 +18,8 @@ public class NuevoContacto extends JFrame implements ActionListener {
 //	 ________________________________
 //__/VARIABLES PARA GUARDAR LOS DATOS
 	public static String nombreContacto, puertoSalidaAnterior = Chat.puertoSalidaTexto;
-	public static int puertoSalida;
+	public static int puertoSalida, buscadorContacto;
+	public static boolean aceptarContacto;
 	
 //	 ____________________________________________________
 //__/VARIABLES PARA LA CONSTRUCION DE LA INTERFAZ GRAFICA
@@ -26,6 +27,8 @@ public class NuevoContacto extends JFrame implements ActionListener {
 	public static JTextField campoNombre, campoPuertoSalida;
 	public static JButton botonAceptar;
 	
+//	 ____________________________________
+//__/CONSTRUCTOR PARA LA INTERFAZ GRAFICA
 	public NuevoContacto() {
 		setLayout(null);
 		setTitle("Nuevo contacto");
@@ -70,6 +73,15 @@ public class NuevoContacto extends JFrame implements ActionListener {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 	
+//	 ______________________________________
+//__/ACTIONES AL PRESIONAR EL BOTON ACEPTAR
+	
+	/*
+	 * Al presionar el JButton: BotonAceptar, se comprobara que los datos ingresados cumplan ciertas condiciones, 
+	 * en caso de cumplirse, se agregara un nuevo contacto a la matriz: matrizContactos y se agregara un nuevo 
+	 * item al JComboBox: cajaContactos con el nuevo puerto de salida.
+	 * 
+	 * */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == botonAceptar) {
 			nombreContacto = campoNombre.getText().trim();
@@ -85,17 +97,39 @@ public class NuevoContacto extends JFrame implements ActionListener {
 					puertoSalida = Integer.parseInt(campoPuertoSalida.getText());
 					
 					if (puertoSalida != InfoInicial.puertoEntrada) {
-						campoPuertoSalida.setText("");
-						campoPuertoSalida.setBackground(Color.WHITE);
-
-						Chat.cajaContactos.addItem(puertoSalida);
-				
-						Chat.matrizContactos[Chat.cantidadContactos][0] = nombreContacto;
-						Chat.matrizContactos[Chat.cantidadContactos][1] = String.valueOf(puertoSalida);
 						
-						Chat.cantidadContactos++;
+						aceptarContacto = true;
+						
+						while (buscadorContacto < Chat.cantidadContactos) {
+							if (Chat.matrizContactos[buscadorContacto][1].equals(String.valueOf(puertoSalida))) {
+								aceptarContacto = false;
+								break;
+							}	
 							
-						this.setVisible(false);
+							buscadorContacto++;
+						}	
+						
+						buscadorContacto = 0;
+						
+						if (aceptarContacto == true) {
+							
+							campoPuertoSalida.setText("");
+							campoPuertoSalida.setBackground(Color.WHITE);
+
+							Chat.cajaContactos.addItem(puertoSalida);
+					
+							Chat.matrizContactos[Chat.cantidadContactos][0] = nombreContacto;
+							Chat.matrizContactos[Chat.cantidadContactos][1] = String.valueOf(puertoSalida);
+							
+							Chat.cantidadContactos++;
+								
+							this.setVisible(false);
+						}
+						
+						else {
+							campoPuertoSalida.setBackground(Color.PINK);
+							JOptionPane.showMessageDialog(null, "PUERTO YA REGISTRADO", "ERROR", JOptionPane.WARNING_MESSAGE);
+						}
 					}
 					
 					else {
@@ -111,13 +145,4 @@ public class NuevoContacto extends JFrame implements ActionListener {
 			}
 		}
 	}
-	
-	public static void main (String[] args) {
-		NuevoContacto ventanaContacto = new NuevoContacto();
-		ventanaContacto.setBounds(0,0,245,300);
-		ventanaContacto.setVisible(true);
-		ventanaContacto.setLocationRelativeTo(null);
-		ventanaContacto.setResizable(false);
-	}
-
 }
