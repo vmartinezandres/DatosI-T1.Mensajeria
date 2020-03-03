@@ -9,7 +9,6 @@ import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -19,8 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
-import servidor.EntradaDatos;
 
 public class Chat extends JFrame implements ActionListener, ItemListener {
 	
